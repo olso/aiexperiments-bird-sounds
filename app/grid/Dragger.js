@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var BoilerPlate = require("../Boilerplate");
+var BoilerPlate = require("../BoilerPlate");
 var Data = require("../core/Data");
 var TWEEN = require("tween.js");
 var Config = require("../core/Config");
@@ -38,13 +38,13 @@ var Dragger = module.exports = function() {
 
 		var texture = PIXI.Texture.fromImage(Config.birdFFTSpriteSheet, false, PIXI.SCALE_MODES.NEAREST);
 		this.sprite = new PIXI.Sprite(texture);
-		this.sprite.scale.x = this.size/32.0;
-		this.sprite.scale.y = this.size/32.0;
+		this.sprite.scale.x = this.size / 32.0;
+		this.sprite.scale.y = this.size / 32.0;
 		scope.container.addChild(this.sprite);
 
 		var myMask = new PIXI.Graphics();
 		myMask.beginFill();
-		myMask.drawRect(-this.size*0.5, -this.size*0.5, this.size, this.size);
+		myMask.drawRect(-this.size * 0.5, -this.size * 0.5, this.size, this.size);
 		myMask.endFill();
 		scope.container.addChild(myMask);
 
@@ -53,13 +53,13 @@ var Dragger = module.exports = function() {
 		var square = new PIXI.Graphics();
 		square.beginFill(Config.colorHighlight, 0.0);
 		square.lineStyle(2, Config.colorHighlight);
-		square.drawRect(-this.size*0.5, -this.size*0.5, this.size, this.size);
+		square.drawRect(-this.size * 0.5, -this.size * 0.5, this.size, this.size);
 		square.endFill();
 		scope.container.addChild(square);
 
 		field = new PIXI.Graphics();
 		field.beginFill(Config.colorHighlight, 0.125);
-		field.drawRect(-this.size*0.5, -this.size*0.5, this.size, this.size);
+		field.drawRect(-this.size * 0.5, -this.size * 0.5, this.size, this.size);
 		field.endFill();
 		field.blendMode = PIXI.BLEND_MODES.MULTIPLY;
 		square.addChild(field);
@@ -69,7 +69,7 @@ var Dragger = module.exports = function() {
 		dot.drawRect(0, 0, 4, 4);
 		dot.endFill();
 
-		this.setSprite({x: 60, y: 57, index: 567});
+		this.setSprite({ x: 60, y: 57, index: 567 });
 
 		scope.container.x = -200;
 		scope.container.y = -200;
@@ -79,27 +79,27 @@ var Dragger = module.exports = function() {
 	this.highlight = function() {
 		var isComplete;
 		var state = { value: 1.25 };
-			tween = new TWEEN.Tween(state)
-				.to({ value: 1 }, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onStart(function(){
-					isComplete = false;
-				})
-				.onUpdate(function() {
+		tween = new TWEEN.Tween(state)
+			.to({ value: 1 }, 100)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onStart(function(){
+				isComplete = false;
+			})
+			.onUpdate(function() {
 
-					scope.container.scale.x = state.value;
-					scope.container.scale.y = state.value;
+				scope.container.scale.x = state.value;
+				scope.container.scale.y = state.value;
 
-				})
-				.onComplete(function(){
-					isComplete = true;
-				})
-				.start();
+			})
+			.onComplete(function(){
+				isComplete = true;
+			})
+			.start();
 	};
 
 	this.setSprite = function(obj) {
-		this.sprite.x = -this.size*(obj.x)-this.size*0.5;
-		this.sprite.y = -this.size*(obj.y)-this.size*0.5;
+		this.sprite.x = -this.size * (obj.x) - this.size * 0.5;
+		this.sprite.y = -this.size * (obj.y) - this.size * 0.5;
 	};
 
 	this.getContainer = function() {

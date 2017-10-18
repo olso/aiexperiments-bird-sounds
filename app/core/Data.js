@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var cssSequencer = require("../../style/loader.scss");
+require("../../style/loader.scss");
 var birdCoords = require("raw!data/tsne/grid.30.30.2d.sorted.tsv");
 var filenames = require("raw!data/names.txt");
 var Config = require("./Config.js");
@@ -22,16 +22,16 @@ var birdSuggestions = require("raw!data/autosuggest_bird.txt");
 
 (function(){
 
-	var i,j;
-	//setup the bird coords
+	var i;
+	// setup the bird coords
 	birdCoords = birdCoords.split("\n");
 	for (i = 0; i < birdCoords.length; i++){
 		var row = birdCoords[i].split("\t");
 		birdCoords[i] = [
-			parseFloat(row[0]), 
-			parseFloat(row[1]), 
+			parseFloat(row[0]),
+			parseFloat(row[1]),
 			parseFloat(row[2])
-			]; 
+		];
 	}
 
 	filenames = filenames.split("\n");
@@ -43,16 +43,16 @@ var birdSuggestions = require("raw!data/autosuggest_bird.txt");
 }());
 
 var Data = module.exports = {
-	videoId: '31PWjb7Do1s',
+	videoId: "31PWjb7Do1s",
 	totalPoints: birdCoords.length,
-	filterStates:null,
+	filterStates: null,
 	filteredList: [],
 	getBird: function(index){
 		return {
-				x: birdCoords[index][0],
-				y: birdCoords[index][1],
-				index: birdCoords[index][2]
-			};
+			x: birdCoords[index][0],
+			y: birdCoords[index][1],
+			index: birdCoords[index][2]
+		};
 	},
 	getBirdIndex: function(index) {
 		return birdCoords[index][2];
@@ -69,22 +69,22 @@ var Data = module.exports = {
 	},
 
 	randomizeFilterStates: function () {
-		var i,j,k;
+		var i;
 		var total = Data.getTotalPoints();
 		var randomState;
 
-		for(i=0;i<total; i++){
-			randomState = (((Math.random()*4)|0) === 0) ? Config.filterVisible:Config.filterHidden;
+		for(i = 0; i < total; i++){
+			randomState = (((Math.random() * 4) | 0) === 0) ? Config.filterVisible : Config.filterHidden;
 			Data.setFilterState(i,randomState);
 		}
 	},
 
 	createFilterStates: function (state) {
-		var i,j,k;
+		var i;
 		var total = Data.getTotalPoints();
 		state = state || Config.filterVisible;
 		Data.filterStates = [];
-		for(i=0;i<total; i++){
+		for(i = 0; i < total; i++){
 			Data.setFilterState(i,state);
 		}
 	},
@@ -94,31 +94,29 @@ var Data = module.exports = {
 	},
 
 	resetFilterStates: function () {
-		var i,j,k;
+		var i;
 		var total = Data.getTotalPoints();
 
-		for(i=0;i<total; i++){
+		for(i = 0; i < total; i++){
 			Data.setFilterState(i,Config.filterVisible);
 		}
 	},
 
 	filter: function(value){
-		var i,j,k;
-		var tag, tags;
-		var total = Data.getTotalPoints();
-		var totalTags;
+		var i,
+			j;
 		var term = value.toUpperCase();
 
 		// single word
-		if(term.split(" ").length===1) {
+		if(term.split(" ").length === 1) {
 			var name;
-			var separators = [' ', '-', '\\\(', '\\\)'].join('|');
+			var separators = [" ", "-", "\\(", "\\)"].join("|");
 			for (i = 0; i < filenames.length; i++){
 				this.filterStates[i] = Config.filterHidden;
-				if(	~filenames[i].indexOf(term) ){
-					name = filenames[i].split(new RegExp(separators, 'g'));
-					for(j=(name.length-1); j>=0; --j) {
-						if(name[j].indexOf(term)===0) {
+				if(~filenames[i].indexOf(term)){
+					name = filenames[i].split(new RegExp(separators, "g"));
+					for(j = (name.length - 1); j >= 0; --j) {
+						if(name[j].indexOf(term) === 0) {
 							this.filterStates[i] = Config.filterVisible;
 							break;
 						}
@@ -131,7 +129,7 @@ var Data = module.exports = {
 		} else {
 			for (i = 0; i < filenames.length; i++){
 				this.filterStates[i] = Config.filterHidden;
-				if(	~filenames[i].indexOf(term) ){
+				if(~filenames[i].indexOf(term)){
 					this.filterStates[i] = Config.filterVisible;
 				}
 			}
@@ -146,21 +144,20 @@ var Data = module.exports = {
 			suggestions = Config.emptySuggestions;
 			return suggestions;
 		}
-		var i,j,k;
-		var tag, tags;
-		var total = birdSuggestions.length;
+		var i,
+			j;
 		var term = value.toUpperCase();
 		var name;
 		suggestions = [];
 
-		var separators = [' ', '-', '\\\(', '\\\)'].join('|');
+		var separators = [" ", "-", "\\(", "\\)"].join("|");
 
 		// inline search
 		for (i = 0; i < birdSuggestions.length; i++){
 
-			name = birdSuggestions[i].split(new RegExp(separators, 'g'));
-			for(j=(name.length-1); j>=0; --j) {
-				if(name[j].indexOf(term)===0) {
+			name = birdSuggestions[i].split(new RegExp(separators, "g"));
+			for(j = (name.length - 1); j >= 0; --j) {
+				if(name[j].indexOf(term) === 0) {
 					suggestions.push(birdSuggestions[i]);
 					break;
 				}
@@ -168,6 +165,6 @@ var Data = module.exports = {
 		}
 
 		return suggestions;
-	},
+	}
 
 };

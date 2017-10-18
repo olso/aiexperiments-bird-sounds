@@ -14,9 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var BoilerPlate = require("../Boilerplate");
-var filterCSS = require("../../style/filter.scss");
-var Config = require("./Config.js");
+require("../../style/filter.scss");
+var BoilerPlate = require("../BoilerPlate");
 var Filter = module.exports = function() {
 
 	var scope = this;
@@ -25,11 +24,10 @@ var Filter = module.exports = function() {
 
 	var isTyping = false;
 	var filter = document.getElementById("filter");
-	var filterInput = filter.getElementsByTagName('input')[0];
-	var filterInputWrapper = filter.getElementsByClassName('input-wrapper')[0];
+	var filterInput = filter.getElementsByTagName("input")[0];
 	var clearButton = filter.getElementsByClassName("clearButton")[0];
 	var searchButton = filter.getElementsByClassName("searchButton")[0];
-	var tags = filter.getElementsByClassName('tags')[0];
+	var tags = filter.getElementsByClassName("tags")[0];
 	this.isEmpty = true;
 
 	var onKeyPress = function(event) {
@@ -42,10 +40,10 @@ var Filter = module.exports = function() {
 			event.stopPropagation();
 			event.preventDefault();
 		}
-	}.bind(scope);
+	};
 
-	var onFilter = function(event) {
-		if(isTyping===false) {
+	var onFilter = function() {
+		if(isTyping === false) {
 			setTimeout(function(){
 				if(filterInput.value === "") {
 					this.isEmpty = true;
@@ -61,7 +59,7 @@ var Filter = module.exports = function() {
 			}.bind(scope), 500);
 		}
 		isTyping = true;
-	}.bind(scope);
+	};
 
 	var onClear = function(event) {
 		filterInput.value = "";
@@ -76,8 +74,8 @@ var Filter = module.exports = function() {
 
 	var onFocusIn = function(event) {
 		filterInput.focus();
-		filter.removeEventListener('click', onFocusIn, false);
-		document.addEventListener('click', onFocusOut, false);
+		filter.removeEventListener("click", onFocusIn, false);
+		document.addEventListener("click", onFocusOut, false);
 		tags.classList.add("show");
 		filter.classList.add("expand");
 		clearButton.classList.add("expand");
@@ -87,20 +85,20 @@ var Filter = module.exports = function() {
 	}.bind(scope);
 
 	var onFocusOut = function(event) {
-		document.removeEventListener('click', onFocusOut, false);
-		filter.addEventListener('click', onFocusIn, false);
+		document.removeEventListener("click", onFocusOut, false);
+		filter.addEventListener("click", onFocusIn, false);
 		tags.classList.remove("show");
 		filter.classList.remove("expand");
 		scope.dispatchEvent("ON_FOCUS_OUT",[filterInput.value]);
 		event.stopPropagation();
 		event.preventDefault();
-	}.bind(scope);
+	};
 
-	filter.addEventListener('click', onFocusIn, false);
-	filter.addEventListener('input', onFilter, false);
-	filter.addEventListener('keypress', onKeyPress, false);
-	clearButton.addEventListener('click', onClear, false);
-	searchButton.addEventListener('click', onFilter, false);
+	filter.addEventListener("click", onFocusIn, false);
+	filter.addEventListener("input", onFilter, false);
+	filter.addEventListener("keypress", onKeyPress, false);
+	clearButton.addEventListener("click", onClear, false);
+	searchButton.addEventListener("click", onFilter, false);
 
 	// input field added though Filter.js to prevent visual bugs
 	var input = document.createElement("input");
@@ -113,7 +111,7 @@ var Filter = module.exports = function() {
 	this.unfocus = function() {
 		filterInput.blur();
 	};
-	
+
 	this.clearAutoSuggest = function() {
 		while (tags.firstChild) {
 			tags.removeChild(tags.firstChild);
@@ -125,8 +123,7 @@ var Filter = module.exports = function() {
 
 		var createButton = function(text) {
 			var btn = document.createElement("BUTTON");
-			btn.className = 'tagButton'; // SEE BIRDS ontouchmove
-			var isSelectedWord = Config.emptySuggestions.indexOf(text) >= 0;
+			btn.className = "tagButton"; // SEE BIRDS ontouchmove
 
 			var t = document.createTextNode(text);
 			var onTagClicked = function(event){
@@ -141,14 +138,14 @@ var Filter = module.exports = function() {
 				scope.dispatchEvent("ON_SUGGESTION_CLICKED",[text]);
 				event.stopPropagation();
 			};
-			btn.addEventListener('click', onTagClicked, false);
-			
+			btn.addEventListener("click", onTagClicked, false);
+
 			btn.appendChild(t);
 			tags.appendChild(btn);
-		}.bind(scope);
+		};
 
 		var total = suggestions.length;
-		for(var i=0; i<total; i++){
+		for(var i = 0; i < total; i++){
 			createButton(suggestions[i]);
 		}
 

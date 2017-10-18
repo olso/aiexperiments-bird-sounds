@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var BoilerPlate = require("../Boilerplate");
-var zoomCSS = require("../../style/ZoomControls.scss");
+var BoilerPlate = require("../BoilerPlate");
+require("../../style/zoomControls.scss");
 
 var ZoomControls = module.exports = function() {
 	var scope = this;
@@ -26,7 +26,7 @@ var ZoomControls = module.exports = function() {
 	this.isDown = false;
 
 	var onWheel = function (event) {
-		if(	document.getElementById("zoom").classList.contains("show")) {
+		if(document.getElementById("zoom").classList.contains("show")) {
 			var delta = (!event.deltaY) ? event.detail : event.deltaY;
 			scope.dispatchEvent("ON_WHEEL",[delta]);
 		}
@@ -62,7 +62,7 @@ var ZoomControls = module.exports = function() {
 		event.cancelBubble = true;
 		event.returnValue = false;
 		return false;
-		
+
 	}.bind(scope);
 
 	var onZoomOutUp = function(){
@@ -97,7 +97,7 @@ var ZoomControls = module.exports = function() {
 	this.zoomOutIcon.addEventListener("touchstart", onZoomOutDown);
 	this.zoomOutIcon.addEventListener("mouseup", onZoomOutUp);
 	this.zoomOutIcon.addEventListener("touchend", onZoomOutUp);
-	
+
 };
 
 ZoomControls.prototype = new BoilerPlate();

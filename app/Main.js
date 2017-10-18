@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-require("style/main.scss");
+require("../style/main.scss");
 
 var Config = require("./core/Config");
 
@@ -24,7 +24,13 @@ require(["domready"], function(domReady){
 
 		document.onselectstart = function () { return false; };
 
-		require(["Birds"], function(Birds){
+		require(["./Birds"], function(Birds){
+
+			var birds = new Birds();
+			var aboutButton = document.getElementById("aboutLink");
+			var startButton = document.getElementById("startLink");
+			var badges = document.getElementById("badges");
+			var cover = document.getElementById("cover");
 
 			var onBadges = function (event) {
 				event.stopPropagation();
@@ -39,25 +45,19 @@ require(["domready"], function(domReady){
 			var onStart = function(event){
 				birds.beginExperience();
 				badges.removeEventListener("click", onBadges,false);
-				startButton.removeEventListener('click', onStart, false);
-				aboutButton.removeEventListener('click', onAbout, false);
+				startButton.removeEventListener("click", onStart, false);
+				aboutButton.removeEventListener("click", onAbout, false);
 				event.preventDefault();
 				event.stopPropagation();
 			};
-
-			var birds = new Birds();
-			var aboutButton = document.getElementById("aboutLink");
-			var startButton = document.getElementById("startLink");
-			var badges = document.getElementById("badges");
-			var cover = document.getElementById("cover");
 
 			birds.addEventListener("GRID_LOADED",function(){
 				if(Config.isSplashDisabled){
 					birds.beginExperience();
 				} else {
 					badges.addEventListener("click", onBadges,false);
-					startButton.addEventListener('click', onStart, false);
-					aboutButton.addEventListener('click', onAbout, false);
+					startButton.addEventListener("click", onStart, false);
+					aboutButton.addEventListener("click", onAbout, false);
 				}
 			});
 

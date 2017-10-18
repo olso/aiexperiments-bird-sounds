@@ -15,18 +15,17 @@ limitations under the License.
 */
 
 var BoilerPlate = module.exports = function() {
-	var scope = this;
 	this._events = {};
 	this.name = "BoilerPlate";
 };
 
 BoilerPlate.prototype = {
-	constructor : BoilerPlate,
+	constructor: BoilerPlate,
 
 	traceFunction: function() {
 		var args = Array.prototype.slice.call(arguments);
 		var func = args.shift();
-		console.log(this.name + "." + func + "(" + args + ");");
+		console.log(this.name + "." + func + "(" + args + ");"); // eslint-disable-line no-console
 	},
 
 	removeEventListener: function(eventName, callback) {
@@ -46,10 +45,10 @@ BoilerPlate.prototype = {
 	dispatchEvent: function(eventName, args) {
 		var callbacks = this._events[eventName];
 		if (!callbacks) {
-			console.log("Event " +eventName+ " not responding.");
+			console.log("Event " + eventName + " not responding."); // eslint-disable-line no-console
 			return this;
 		}
-		for (var i = 0, l = callbacks.length; i < l; i++) {
+		for (var i = 0, l = callbacks.length; i < l; i += 1) {
 			callbacks[i].apply(null, args);
 		}
 		return this;

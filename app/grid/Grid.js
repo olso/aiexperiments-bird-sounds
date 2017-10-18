@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var BoilerPlate = require("../Boilerplate");
+require("../../style/grid.scss");
+var BoilerPlate = require("../BoilerPlate");
 var Dragger = require("./Dragger");
 var PIXI = require("pixi.js");
-var gridCSS = require("../../style/grid.scss");
 var Data = require("../core/Data");
 var Config = require("../core/Config");
 var Stats = require("stats.js");
@@ -61,17 +61,17 @@ var Grid = module.exports = function() {
 	this.init = function() {
 		if(Config.isStatsEnabled) {
 			stats = new Stats();
-			stats.domElement.style.position = 'absolute';
-			stats.domElement.style.left = '0px';
+			stats.domElement.style.position = "absolute";
+			stats.domElement.style.left = "0px";
 			stats.domElement.style.top = null;
-			stats.domElement.style.bottom = '0px';
-			document.body.appendChild( stats.domElement );
+			stats.domElement.style.bottom = "0px";
+			document.body.appendChild(stats.domElement);
 		}
 
 		PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 		var loader = PIXI.loader;
 		loader.add("spriteSheet", Config.birdFFTSpriteSheet);
-		loader.once('complete',function() {
+		loader.once("complete",function() {
 			scope.onSpriteSheetLoaded();
 		});
 		loader.load();
@@ -88,11 +88,11 @@ var Grid = module.exports = function() {
 				antialias: false,
 				transparent: false,
 				resolution: 1,
-				roundPixels:true
+				roundPixels: true
 			},
 			true
 		);
-		var grid = document.getElementById('grid');
+		var grid = document.getElementById("grid");
 		grid.appendChild(renderer.view);
 		stage = new PIXI.Container();
 		base = new PIXI.Graphics();
@@ -131,8 +131,8 @@ var Grid = module.exports = function() {
 		debugBox.y = 50;
 
 		// centers bird grid
-		birdGrid.x = (window.innerWidth-birdGrid.width)*0.5;
-		birdGrid.y = (window.innerHeight-birdGrid.height)*0.5;
+		birdGrid.x = (window.innerWidth - birdGrid.width) * 0.5;
+		birdGrid.y = (window.innerHeight - birdGrid.height) * 0.5;
 
 		// dragger
 		dragger = new Dragger();
@@ -153,17 +153,17 @@ var Grid = module.exports = function() {
 
 		for (var i = 0; i < totalSprites; i++) {
 			var square = new PIXI.Sprite(textureSquareDark);
-			square.x = (i%Config.gridTotalX)*Config.gridUnit;
+			square.x = (i % Config.gridTotalX) * Config.gridUnit;
 			square.y = HIDE_OFFSET;
 			filterCovers.addChild(square);
 		}
 
 		// DEBUG
-		var wedgeGraphicCoords = [ 
-			0, 0, 
-			Config.gridUnit, 0, 
-			Config.gridUnit, Config.gridUnit*0.5,  
-			Config.gridUnit*0.5, Config.gridUnit, 
+		var wedgeGraphicCoords = [
+			0, 0,
+			Config.gridUnit, 0,
+			Config.gridUnit, Config.gridUnit * 0.5,
+			Config.gridUnit * 0.5, Config.gridUnit,
 			0, Config.gridUnit
 		];
 
@@ -214,10 +214,10 @@ var Grid = module.exports = function() {
 		var onDragStarted = function(event) {
 			var touches = event.data.originalEvent.changedTouches;
 
-			if(touches && touches.length===2) {
+			if(touches && touches.length === 2) {
 				var dx = touches[0].clientX - touches[1].clientX;
 				var dy = touches[0].clientY - touches[1].clientY;
-				pinchDistanceSquared = (dx*dx + dy*dy);
+				pinchDistanceSquared = (dx * dx + dy * dy);
 				pinchDistanceSquaredStart = pinchDistanceSquared;
 
 				touchState = IS_ZOOMING;
@@ -227,7 +227,7 @@ var Grid = module.exports = function() {
 			scope.dispatchEvent("ON_DOWN");
 			curr.x = event.data.global.x;
 			curr.y = event.data.global.y;
-			prev.x = curr.x; 
+			prev.x = curr.x;
 			prev.y = curr.y;
 			touchState = IS_DRAGGING;
 			onDragging(event);
@@ -237,7 +237,7 @@ var Grid = module.exports = function() {
 			}
 			speed.x = 0;
 			speed.y = 0;
-		}.bind(scope);
+		};
 
 		var onDragging = function(event) {
 			curr.x = event.data.global.x;
@@ -247,21 +247,22 @@ var Grid = module.exports = function() {
 				var touches = event.data.originalEvent.changedTouches;
 				var dx = touches[0].clientX - touches[1].clientX;
 				var dy = touches[0].clientY - touches[1].clientY;
-				pinchDistanceSquared = (dx*dx + dy*dy);
+				pinchDistanceSquared = (dx * dx + dy * dy);
 				this.zoom(
-					(pinchDistanceSquaredStart < pinchDistanceSquared), 
-					0.025);
-				return;
+					(pinchDistanceSquaredStart < pinchDistanceSquared),
+					0.025
+				);
+
 			}
 
 		}.bind(scope);
 
 		var onDragStopped = function(event) {
 			touchState = IS_SETTLING;
-		}.bind(scope);
+		};
 
 		/*
-		 * Gets the position of dragger, 
+		 * Gets the position of dragger,
 		 * converts it to gridspace as defined by birdGrid.cursor,
 		 * cursor position in converted to increments stored in cursorIndex
 		 * index is calculated from cursorIndex
@@ -280,10 +281,10 @@ var Grid = module.exports = function() {
 			dragger.y = curr.y;
 
 			// panning related
-			normal.x = (dragger.x / window.innerWidth)*2-1; // set number to be from -1 to 1
-			normal.y = (dragger.y / window.innerHeight)*2-1; // set number to be from -1 to 1
-			direction.x = (normal.x<0) ? -1 : 1;
-			direction.y = (normal.y<0) ? -1 : 1;
+			normal.x = (dragger.x / window.innerWidth) * 2 - 1; // set number to be from -1 to 1
+			normal.y = (dragger.y / window.innerHeight) * 2 - 1; // set number to be from -1 to 1
+			direction.x = (normal.x < 0) ? -1 : 1;
+			direction.y = (normal.y < 0) ? -1 : 1;
 			acceleration.x = (Math.abs(normal.x) < bounds.x) ? 0 : (0.3);
 			acceleration.y = (Math.abs(normal.y) < bounds.y) ? 0 : (0.3);
 
@@ -295,28 +296,28 @@ var Grid = module.exports = function() {
 			}
 
 			var friction = (touchState === IS_SETTLING) ? 0.8 : 0.95;
-			speed.x += acceleration.x*direction.x;
-			speed.y += acceleration.y*direction.y;
+			speed.x += acceleration.x * direction.x;
+			speed.y += acceleration.y * direction.y;
 			speed.x *= friction;
 			speed.y *= friction;
 			speed.x = this.clamp(speed.x, -10,10); // max min speeds
 			speed.y = this.clamp(speed.y, -10,10); // max min speeds
 
-			if((touchState === IS_SETTLING) && Math.abs(speed.x)<0.1 && Math.abs(speed.y)<0.1){
+			if((touchState === IS_SETTLING) && Math.abs(speed.x) < 0.1 && Math.abs(speed.y) < 0.1){
 				touchState = IS_SETTLED;
 				speed.x = 0;
 				speed.y = 0;
 			}
 
-			var isGridVisible = 
+			var isGridVisible =
 				birdGrid.x > 0 &&
 				birdGrid.y > 0 &&
 				(birdGrid.x + birdGrid.width) < window.innerWidth &&
 				(birdGrid.y + birdGrid.height) < window.innerHeight;
 
 			if(isGridVisible) {
-				birdGrid.x += ((window.innerWidth - birdGrid.width)*0.5-birdGrid.x)*0.1;
-				birdGrid.y += ((window.innerHeight - birdGrid.height)*0.5-birdGrid.y)*0.1;
+				birdGrid.x += ((window.innerWidth - birdGrid.width) * 0.5 - birdGrid.x) * 0.1;
+				birdGrid.y += ((window.innerHeight - birdGrid.height) * 0.5 - birdGrid.y) * 0.1;
 			} else {
 				birdGrid.x -= speed.x;
 				birdGrid.y -= speed.y;
@@ -325,45 +326,48 @@ var Grid = module.exports = function() {
 			this.updateOuterBorder();
 
 			if((touchState === IS_DRAGGING)) {
-				birdGrid.cursor.x = 1/scalar * (dragger.x - birdGrid.x);
-				birdGrid.cursor.y = 1/scalar * (dragger.y - birdGrid.y);
+				birdGrid.cursor.x = 1 / scalar * (dragger.x - birdGrid.x);
+				birdGrid.cursor.y = 1 / scalar * (dragger.y - birdGrid.y);
 			}
 
 			// do nearest check if filtered
-			if(Data.filteredList.length!==0 && Data.filteredList.length<=5000) {
+			if(Data.filteredList.length !== 0 && Data.filteredList.length <= 5000) {
 
 				var diameterSquared = 100000000;
 				var smallestIndex = -1;
 				var currentIndex = -1;
-				var dx,dy,dsq;
-				var posX, posY;
-				for(  i=0; i<Data.filteredList.length; i++){
+				var dx,
+					dy,
+					dsq;
+				var posX,
+					posY;
+				for(i = 0; i < Data.filteredList.length; i++){
 					currentIndex = Data.filteredList[i];
-					posX = (currentIndex%Config.gridTotalX)*Config.gridUnit;
-					posY = ((currentIndex/Config.gridTotalX)|0)*Config.gridUnit;
+					posX = (currentIndex % Config.gridTotalX) * Config.gridUnit;
+					posY = ((currentIndex / Config.gridTotalX) | 0) * Config.gridUnit;
 
 					dx = birdGrid.cursor.x - posX;
 					dy = birdGrid.cursor.y - posY;
 
-					dsq = dx*dx + dy*dy;
-					if(dsq<diameterSquared){
+					dsq = dx * dx + dy * dy;
+					if(dsq < diameterSquared){
 						diameterSquared = dsq;
 						smallestIndex = currentIndex;
 					}
 				}
-				birdGrid.cursor.x = (smallestIndex%Config.gridTotalX)*Config.gridUnit;
-				birdGrid.cursor.y = ((smallestIndex/Config.gridTotalX)|0)*Config.gridUnit;
+				birdGrid.cursor.x = (smallestIndex % Config.gridTotalX) * Config.gridUnit;
+				birdGrid.cursor.y = ((smallestIndex / Config.gridTotalX) | 0) * Config.gridUnit;
 			}
 
-			cursorIndex.x = (birdGrid.cursor.x/Config.gridUnit) | 0;
-			cursorIndex.y = (birdGrid.cursor.y/Config.gridUnit) | 0;
-			cursorIndex.x = this.clamp(cursorIndex.x,0,Config.gridTotalX-1);
-			cursorIndex.y = this.clamp(cursorIndex.y,0,Config.gridTotalY-1);
+			cursorIndex.x = (birdGrid.cursor.x / Config.gridUnit) | 0;
+			cursorIndex.y = (birdGrid.cursor.y / Config.gridUnit) | 0;
+			cursorIndex.x = this.clamp(cursorIndex.x,0,Config.gridTotalX - 1);
+			cursorIndex.y = this.clamp(cursorIndex.y,0,Config.gridTotalY - 1);
 
 			this.updateDragPosition();
 
 			var index = cursorIndex.y * Config.gridTotalX + cursorIndex.x;
-			if(filterCovers.children[index].y===HIDE_OFFSET) {
+			if(filterCovers.children[index].y === HIDE_OFFSET) {
 				this.setBird(cursorIndex);
 			}
 
@@ -375,18 +379,18 @@ var Grid = module.exports = function() {
 
 		var onPinchStarted = function(event) {
 			var touches = event.data.originalEvent.changedTouches;
-			var dx = touches[ 0 ].clientX - touches[ 1 ].clientX;
-			var dy = touches[ 0 ].clientY - touches[ 1 ].clientY;
-			var touchZoomDistance = Math.sqrt( dx * dx + dy * dy );
+			var dx = touches[0].clientX - touches[1].clientX;
+			var dy = touches[0].clientY - touches[1].clientY;
+			var touchZoomDistance = Math.sqrt(dx * dx + dy * dy);
 			var touchZoomDistancePrev = touchZoomDistance;
 
 			var onPinchMoved = function(event) {
 				var touches = event.data.originalEvent.changedTouches;
-				var dx = touches[ 0 ].clientX - touches[ 1 ].clientX;
-				var dy = touches[ 0 ].clientY - touches[ 1 ].clientY;
+				var dx = touches[0].clientX - touches[1].clientX;
+				var dy = touches[0].clientY - touches[1].clientY;
 				touchZoomDistancePrev = touchZoomDistancePrev;
-				var touchZoomDistancePrev = Math.sqrt( dx * dx + dy * dy );
-				this.zoom(touchZoomDistancePrev>touchZoomDistance,0.025);
+				var touchZoomDistancePrev = Math.sqrt(dx * dx + dy * dy);
+				this.zoom(touchZoomDistancePrev > touchZoomDistance,0.025);
 
 				event.stopPropagation();
 				event.preventDefault();
@@ -399,7 +403,7 @@ var Grid = module.exports = function() {
 				base.touchend = onDragStopped;
 				base.touchendoutside = onDragStopped;
 
-			}.bind(scope);
+			};
 
 			base.mousedown = null;
 			base.touchstart = null;
@@ -407,24 +411,24 @@ var Grid = module.exports = function() {
 			base.touchend = onPinchEnded;
 			base.touchendoutside = onPinchEnded;
 
-		}.bind(scope);
+		};
 
 		var onTouchStarted = function(event) {
 			var touches = event.data.originalEvent.changedTouches;
 
-			switch ( touches.length ) {
-				case 1:
-					touchState = IS_DRAGGING;
-					onDragStarted(event);
-					break;
-				case 2:
-					touchState = IS_ZOOMING;
-					onPinchStarted(event);
-					break;
+			switch (touches.length) {
+			case 1:
+				touchState = IS_DRAGGING;
+				onDragStarted(event);
+				break;
+			case 2:
+				touchState = IS_ZOOMING;
+				onPinchStarted(event);
+				break;
 
-				default:
+			default:
 			}
-		}.bind(scope);
+		};
 
 		// add events to grid
 		base.interactive = true;
@@ -442,43 +446,44 @@ var Grid = module.exports = function() {
 
 		// add keyboard events
 		document.body.addEventListener("keydown", function(event){
-			if(document.activeElement === document.body.getElementsByTagName('input')[0]){
+			if(document.activeElement === document.body.getElementsByTagName("input")[0]){
 				return;
 			}
-			var x, y;
-			normal.x = (dragger.container.x / window.innerWidth)*2-1; // set number to be from -1 to 1
-			normal.y = (dragger.container.y / window.innerHeight)*2-1; // set number to be from -1 to 1
-			increment.x = (Config.gridUnit*birdGrid.scale.x);
-			increment.y = (Config.gridUnit*birdGrid.scale.y);
+			var x,
+				y;
+			normal.x = (dragger.container.x / window.innerWidth) * 2 - 1; // set number to be from -1 to 1
+			normal.y = (dragger.container.y / window.innerHeight) * 2 - 1; // set number to be from -1 to 1
+			increment.x = (Config.gridUnit * birdGrid.scale.x);
+			increment.y = (Config.gridUnit * birdGrid.scale.y);
 			switch(event.keyCode) {
-				case 38: // UP
-					birdGrid.y = (normal.y < -bounds.y) ? (birdGrid.y + increment.y) : (birdGrid.y);
-					cursorIndex.y = this.clamp(--cursorIndex.y, 0, Config.gridTotalY-1);
-					this.updateOuterBorder();
-					this.setBird(cursorIndex);
-					break;
-				case 40: // DOWN
-					birdGrid.y = (normal.y > bounds.y) ? (birdGrid.y - increment.y) : (birdGrid.y);
-					cursorIndex.y = this.clamp(++cursorIndex.y, 0, Config.gridTotalY-1);
-					this.updateOuterBorder();
-					this.setBird(cursorIndex);
-					break;
-				case 37: // LEFT
-					birdGrid.x = (normal.x < -bounds.x) ? (birdGrid.x + increment.x) : (birdGrid.x);
-					cursorIndex.x = this.clamp(--cursorIndex.x, 0, Config.gridTotalX-1);
-					this.updateOuterBorder();
-					this.setBird(cursorIndex);
-					break;
-				case 39: // RIGHT
-					birdGrid.x = (normal.x > bounds.x) ? (birdGrid.x - increment.x) : (birdGrid.x);
-					cursorIndex.x = this.clamp(++cursorIndex.x, 0, Config.gridTotalX-1);
-					this.updateOuterBorder();
-					this.setBird(cursorIndex);
-					break;
-				case 32: // SPACEBAR
-					this.dispatchEvent("ON_REPLAY", [this.birdData]);
-					break;
-				default:
+			case 38: // UP
+				birdGrid.y = (normal.y < -bounds.y) ? (birdGrid.y + increment.y) : (birdGrid.y);
+				cursorIndex.y = this.clamp(--cursorIndex.y, 0, Config.gridTotalY - 1);
+				this.updateOuterBorder();
+				this.setBird(cursorIndex);
+				break;
+			case 40: // DOWN
+				birdGrid.y = (normal.y > bounds.y) ? (birdGrid.y - increment.y) : (birdGrid.y);
+				cursorIndex.y = this.clamp(++cursorIndex.y, 0, Config.gridTotalY - 1);
+				this.updateOuterBorder();
+				this.setBird(cursorIndex);
+				break;
+			case 37: // LEFT
+				birdGrid.x = (normal.x < -bounds.x) ? (birdGrid.x + increment.x) : (birdGrid.x);
+				cursorIndex.x = this.clamp(--cursorIndex.x, 0, Config.gridTotalX - 1);
+				this.updateOuterBorder();
+				this.setBird(cursorIndex);
+				break;
+			case 39: // RIGHT
+				birdGrid.x = (normal.x > bounds.x) ? (birdGrid.x - increment.x) : (birdGrid.x);
+				cursorIndex.x = this.clamp(++cursorIndex.x, 0, Config.gridTotalX - 1);
+				this.updateOuterBorder();
+				this.setBird(cursorIndex);
+				break;
+			case 32: // SPACEBAR
+				this.dispatchEvent("ON_REPLAY", [this.birdData]);
+				break;
+			default:
 			}
 		}.bind(scope));
 	};
@@ -487,10 +492,10 @@ var Grid = module.exports = function() {
 		var scalar = birdGrid.scale.x;
 		var xPos = birdGrid.x;
 		var yPos = birdGrid.y;
-		xPos += (birdGrid.cursorSnapped.x )*scalar;
-		yPos += (birdGrid.cursorSnapped.y )*scalar;
-		xPos += 16*scalar;
-		yPos += 16*scalar;
+		xPos += (birdGrid.cursorSnapped.x) * scalar;
+		yPos += (birdGrid.cursorSnapped.y) * scalar;
+		xPos += 16 * scalar;
+		yPos += 16 * scalar;
 
 		dragger.container.x = xPos;
 		dragger.container.y = yPos;
@@ -502,43 +507,43 @@ var Grid = module.exports = function() {
 		var scalar = birdGrid.scale.x;
 		var trail;
 		trail = new PIXI.Graphics();
-		trail.lineStyle(2/scalar, Config.colorHighlight);
-		trail.drawRect(-32*0.5, -32*0.5, 32, 32);
-		trail.x = (birdGrid.cursorSnapped.x );
-		trail.y = (birdGrid.cursorSnapped.y );
+		trail.lineStyle(2 / scalar, Config.colorHighlight);
+		trail.drawRect(-32 * 0.5, -32 * 0.5, 32, 32);
+		trail.x = (birdGrid.cursorSnapped.x);
+		trail.y = (birdGrid.cursorSnapped.y);
 		trail.x += 16;
 		trail.y += 16;
 
 		birdGrid.addChild(trail);
 
 		var isComplete;
-		var state = { scalar: 1, alpha:1 };
-			tween = new TWEEN.Tween(state)
-				.to({ scalar: 1, alpha:0 }, 1000)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onUpdate(function() {
+		var state = { scalar: 1, alpha: 1 };
+		tween = new TWEEN.Tween(state)
+			.to({ scalar: 1, alpha: 0 }, 1000)
+			.easing(TWEEN.Easing.Quadratic.InOut)
+			.onUpdate(function() {
 
-					trail.scale.x = state.scalar;
-					trail.scale.y = state.scalar;
-					trail.alpha = state.alpha;
-				})
-				.onComplete(function(){
-					birdGrid.removeChild(trail);
-				})
-				.start();
+				trail.scale.x = state.scalar;
+				trail.scale.y = state.scalar;
+				trail.alpha = state.alpha;
+			})
+			.onComplete(function(){
+				birdGrid.removeChild(trail);
+			})
+			.start();
 
 	};
 	this.setBird = function(bird) {
 		if(!birdGrid) return;
 		var scalar = birdGrid.scale.x;
 		var index = bird.y * Config.gridTotalX + bird.x;
-		var soundOffsetIndex = (index+Config.gridTotalX)%(Config.gridTotalX*Config.gridTotalY);
+		var soundOffsetIndex = (index + Config.gridTotalX) % (Config.gridTotalX * Config.gridTotalY);
 		var selectedBirdData = Data.getBird(index);
 		scope.birdData = Data.getBird(soundOffsetIndex);
 
 		// visuals
-		birdGrid.cursorSnapped.x = scope.snapToGrid( bird.x*Config.gridUnit, Config.gridUnit );
-		birdGrid.cursorSnapped.y = scope.snapToGrid( bird.y*Config.gridUnit, Config.gridUnit );
+		birdGrid.cursorSnapped.x = scope.snapToGrid(bird.x * Config.gridUnit, Config.gridUnit);
+		birdGrid.cursorSnapped.y = scope.snapToGrid(bird.y * Config.gridUnit, Config.gridUnit);
 
 		scope.updateDragPosition();
 
@@ -547,7 +552,7 @@ var Grid = module.exports = function() {
 			dragger.setSprite(selectedBirdData);
 			scope.createTrail();
 			scope.dispatchEvent("ON_CHANGED", [scope.birdData, dragger.container]);
-		} else if(	touchState === IS_ZOOMING) {
+		} else if(touchState === IS_ZOOMING) {
 			scope.dispatchEvent("ON_ZOOMED", [dragger.container]);
 		}
 
@@ -555,10 +560,10 @@ var Grid = module.exports = function() {
 
 	this.getGraphCoordinates = (function () {
 		var ctx = {
-			global: { x: 0, y: 0}
+			global: { x: 0, y: 0 }
 		};
 		return function (x, y) {
-			ctx.global.x = x; 
+			ctx.global.x = x;
 			ctx.global.y = y;
 			return PIXI.interaction.InteractionData.prototype.getLocalPosition.call(ctx, birdGrid);
 		};
@@ -570,23 +575,23 @@ var Grid = module.exports = function() {
 		}
 		var windowDistance = window.innerWidth;
 		var spriteDistance = scope.sprite.storedWidth;
-		if(window.innerHeight<window.innerWidth){
+		if(window.innerHeight < window.innerWidth){
 			windowDistance = window.innerHeight;
 			spriteDistance = scope.sprite.storedHeight;
 		}
 
-		if(!isZoomIn && birdGrid.scale.x <= (windowDistance-margin*2)/spriteDistance) {
-			birdGrid.x += ((window.innerWidth - birdGrid.width)*0.5-birdGrid.x)*0.2;
-			birdGrid.y += ((window.innerHeight - birdGrid.height)*0.5-birdGrid.y)*0.2;
+		if(!isZoomIn && birdGrid.scale.x <= (windowDistance - margin * 2) / spriteDistance) {
+			birdGrid.x += ((window.innerWidth - birdGrid.width) * 0.5 - birdGrid.x) * 0.2;
+			birdGrid.y += ((window.innerHeight - birdGrid.height) * 0.5 - birdGrid.y) * 0.2;
 			scope.updateOuterBorder();
 			scope.setBird(cursorIndex);
 			return;
 		}
 
 		// if at max zoom level
-		if(isZoomIn && birdGrid.scale.x*Config.gridUnit >= dragger.size) {
-			birdGrid.scale.x = dragger.size/Config.gridUnit;
-			birdGrid.scale.y = dragger.size/Config.gridUnit;
+		if(isZoomIn && birdGrid.scale.x * Config.gridUnit >= dragger.size) {
+			birdGrid.scale.x = dragger.size / Config.gridUnit;
+			birdGrid.scale.y = dragger.size / Config.gridUnit;
 			scope.dispatchEvent("ON_MAX_MIN_ZOOM");
 		} else {
 			direction = isZoomIn ? 1 : -1;
@@ -608,10 +613,10 @@ var Grid = module.exports = function() {
 		var scalar = birdGrid.scale.x;
 		var xPos = birdGrid.x;
 		var yPos = birdGrid.y;
-		xPos += (birdGrid.cursorSnapped.x )*scalar;
-		yPos += (birdGrid.cursorSnapped.y )*scalar;
-		xPos += 16*scalar;
-		yPos += 16*scalar;
+		xPos += (birdGrid.cursorSnapped.x) * scalar;
+		yPos += (birdGrid.cursorSnapped.y) * scalar;
+		xPos += 16 * scalar;
+		yPos += 16 * scalar;
 
 		dragger.container.x = xPos;
 		dragger.container.y = yPos;
@@ -626,9 +631,9 @@ var Grid = module.exports = function() {
 		var totalSprites = Data.getTotalPoints();
 		Data.filteredList = [];
 		for (var i = 0; i < totalSprites; i++) {
-			var soundOffsetIndex = (i+Config.gridTotalX)%(Config.gridTotalX*Config.gridTotalY);
+			var soundOffsetIndex = (i + Config.gridTotalX) % (Config.gridTotalX * Config.gridTotalY);
 			if(Data.filterStates[Data.getBirdIndex(soundOffsetIndex)] === Config.filterHidden){
-				filterCovers.children[i].y = ((i/Config.gridTotalX)|0)*Config.gridUnit;
+				filterCovers.children[i].y = ((i / Config.gridTotalX) | 0) * Config.gridUnit;
 			} else {
 				filterCovers.children[i].y = HIDE_OFFSET;
 				Data.filteredList.push(i);
@@ -638,7 +643,7 @@ var Grid = module.exports = function() {
 	};
 
 	this.updateGridColor = function(color) {
-		birdGrid.field.visible = (color!==Config.colorLight);
+		birdGrid.field.visible = (color !== Config.colorLight);
 		this.updateOuterBorder();
 	};
 
@@ -646,19 +651,19 @@ var Grid = module.exports = function() {
 		birdGridOutline.clear();
 		birdGridOutline.lineStyle(20, renderer.backgroundColor);
 		birdGridOutline.drawRect(
-			(birdGrid.x-8)|0,
-			(birdGrid.y-8)|0,
-			(birdGrid.width+16)|0,
-			(birdGrid.height+16)|0
-			);
+			(birdGrid.x - 8) | 0,
+			(birdGrid.y - 8) | 0,
+			(birdGrid.width + 16) | 0,
+			(birdGrid.height + 16) | 0
+		);
 
 		birdGridOutline.lineStyle(1, 0xCCCCCC);
 		birdGridOutline.drawRect(
-			(birdGrid.x-10)|0,
-			(birdGrid.y-10)|0,
-			(birdGrid.width+20)|0,
-			(birdGrid.height+20)|0
-			);
+			(birdGrid.x - 10) | 0,
+			(birdGrid.y - 10) | 0,
+			(birdGrid.width + 20) | 0,
+			(birdGrid.height + 20) | 0
+		);
 	};
 
 	this.highlight = function() {
@@ -690,7 +695,7 @@ var Grid = module.exports = function() {
 	this.resize = function(){
 		renderer.resize(window.innerWidth, window.innerHeight);
 	};
-	
+
 	// ------------------------------------------------------------
 	// UTILITY
 	// ------------------------------------------------------------

@@ -35,6 +35,17 @@ var Birds = module.exports = function() {
 	this.sound = null;
 	this.label = null;
 
+
+	var getParameterByName = function(name, url) {
+		if (!url) url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+		var results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return "";
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	};
+
 	this.init = function() {
 
 		// check for webGL;
@@ -48,13 +59,14 @@ var Birds = module.exports = function() {
 			noGL.classList.add("show");
 		}
 
-		Config.domain 			= (getParameterByName("domain")==="local") ? "./" : Config.domain;
-		Config.isAudioDisabled 	= (getParameterByName("isAudioDisabled")==="true");
-		Config.isStatsEnabled 	= (getParameterByName("isStatsEnabled")==="true");
-		Config.isDebugEnabled 	= (getParameterByName("isDebugEnabled")==="true");
-		Config.isMobileEnabled 	= (getParameterByName("isMobileEnabled")==="true");
+		Config.domain 			= (getParameterByName("domain") === "local") ? "./" : Config.domain;
+		Config.isAudioDisabled 	= (getParameterByName("isAudioDisabled") === "true");
+		Config.isStatsEnabled 	= (getParameterByName("isStatsEnabled") === "true");
+		Config.isDebugEnabled 	= (getParameterByName("isDebugEnabled") === "true");
+		Config.isMobileEnabled 	= (getParameterByName("isMobileEnabled") === "true");
 
 		if(isMobile.any() && !Config.isMobileEnabled) {
+
 			noMobile.classList.add("show");
 			return;
 		}
@@ -65,7 +77,7 @@ var Birds = module.exports = function() {
 
 		var dragExceptions = "tagButtontagsdescriptionthumbnailabout";
 		document.ontouchmove = function(event){
-			if (dragExceptions.indexOf(event.target.className.split(" ")[0]) === -1 ) {
+			if (dragExceptions.indexOf(event.target.className.split(" ")[0]) === -1) {
 				event.preventDefault();
 			}
 		};
@@ -75,16 +87,15 @@ var Birds = module.exports = function() {
 
 		var aboutLink = document.getElementById("aboutLink");
 		var about = document.getElementById("about");
-		var cover = document.getElementById("cover");
+		// var cover = document.getElementById("cover");
 		var aboutContainer = about.getElementsByClassName("container")[0];
 		var intro = document.getElementById("intro");
-		var startLink = document.getElementById("startLink");
 
 		aboutContainer.addEventListener("click", function(event) {
 			event.stopPropagation();
-		}.bind(scope), false);
+		}, false);
 
-		aboutLink.addEventListener("click", function(event) {
+		aboutLink.addEventListener("click", function() {
 			this.grid.disableZoom();
 			about.classList.add("show");
 			intro.classList.add("hide");
@@ -132,7 +143,7 @@ var Birds = module.exports = function() {
 				this.grid.updateGridColor(Config.colorLight);
 			}
 		}.bind(this));
-		this.filter.addEventListener("ON_FOCUS_OUT", function(input){
+		this.filter.addEventListener("ON_FOCUS_OUT", function(){
 			this.grid.enableZoom();
 			this.filter.clearAutoSuggest();
 			if(this.filter.isEmpty){
@@ -181,9 +192,8 @@ var Birds = module.exports = function() {
 	};
 
 	this.loadBirdData = function() {
-
-		startLink.classList.add("show");
-		aboutLink.classList.add("show");
+		document.getElementById("startLink").classList.add("show");
+		document.getElementById("aboutLink").classList.add("show");
 
 		this.label = new Label();
 		this.sound = new Sound();
@@ -196,37 +206,37 @@ var Birds = module.exports = function() {
 		}.bind(this));
 	};
 
-	this.loadVideoPlayer = function(event) {
+	this.loadVideoPlayer = function() {
 
 		var playerContainer = document.getElementById("drumsVideo");
 		var playButton = document.getElementsByClassName("playButton")[0];
 		var thumbnail = document.getElementById("thumbnail");
 		var ytPlayer = null;
 
-		var onPlayerReady = function(event) {
+		var onPlayerReady = function() {
 			playerContainer.style.display = "none";
-			playButton.addEventListener("click", function(event) {
+			playButton.addEventListener("click", function() {
 				playerContainer.style.display = "block";
 				ytPlayer.playVideo();
 				playButton.style.display = "none";
 				thumbnail.style.display = "none";
 			},false);
 			var about = document.getElementById("about");
-			about.addEventListener("click", function(event) {
+			about.addEventListener("click", function() {
 				ytPlayer.pauseVideo();
 			},false);
 		};
-		ytPlayer = new YT.Player('drumsVideo', {
-			width:'100%',
-			height:'100%',
-			videoId: Data.videoId,  // youtube video id
+		ytPlayer = new YT.Player("drumsVideo", {
+			width: "100%",
+			height: "100%",
+			videoId: Data.videoId, // youtube video id
 			playerVars: {
-				'autoplay': 0,
-				'rel': 0,
-				'showinfo': 0
+				autoplay: 0,
+				rel: 0,
+				showinfo: 0
 			},
 			events: {
-				'onReady': onPlayerReady
+				onReady: onPlayerReady
 			}
 		});
 	};
@@ -240,13 +250,13 @@ var Birds = module.exports = function() {
 		var label = document.getElementById("birdLabel");
 		var filter = document.getElementById("filter");
 
-		aboutLink.addEventListener("click", function(event) {
+		aboutLink.addEventListener("click", function() {
 			this.grid.disableZoom();
 			about.classList.add("show");
 			intro.classList.add("hide");
 		}.bind(scope));
 
-		about.addEventListener("click", function(event) {
+		about.addEventListener("click", function() {
 			var hasIntro = document.getElementById("intro");
 			this.grid.enableZoom();
 			this.zoomControls.show();
@@ -272,13 +282,13 @@ var Birds = module.exports = function() {
 			infoIcon.classList.remove("show");
 			cover.classList.add("show");
 			about.classList.add("show");
-			
+
 			this.grid.hide();
 			this.grid.disableZoom();
 		}.bind(scope));
 
 	};
-	
+
 	this.beginExperience = function(){
 
 		// show interface element after intro
@@ -308,32 +318,23 @@ var Birds = module.exports = function() {
 		scope.grid.setDefault();
 	};
 
-	//a timeout is used get the the true height and width
+	// a timeout is used get the the true height and width
 	this.reorientTimer = null;
-	this.reorient = function(event) {
+	this.reorient = function() {
 		clearTimeout(this.reorientTimer);
 		this.reorientTimer = setTimeout(function() {
 			var isLandScape = window.innerHeight < window.innerWidth;
-			var isPhone = window.innerHeight < 480 || window.innerWidth < 480; 
+			var isPhone = window.innerHeight < 480 || window.innerWidth < 480;
 			var reorient = document.getElementById("reorient");
 			if(isLandScape && isMobile.any() && isPhone) {
 				reorient.classList.add("show");
 			} else {
 				reorient.classList.remove("show");
-			}			
+			}
 
 		}, 250);
 	};
 
-	var getParameterByName = function(name, url) {
-		if (!url) url = window.location.href;
-		name = name.replace(/[\[\]]/g, "\\$&");
-		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-			results = regex.exec(url);
-		if (!results) return null;
-		if (!results[2]) return '';
-		return decodeURIComponent(results[2].replace(/\+/g, " "));
-	};
 
 	var isMobile = {
 		Android: function() {

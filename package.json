@@ -5,6 +5,7 @@
   "main": "build/Main.js",
   "scripts": {
     "eslint": "eslint --ext .js ./ --cache",
+    "eslint:fix": "eslint --ext .js ./ --cache --fix",
     "start": "webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack --color -p --progress"
   },
@@ -25,6 +26,7 @@
     "autoprefixer-loader": "3.2.0",
     "css-loader": "0.23.1",
     "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^2.7.0",
     "json-loader": "0.5.4",
