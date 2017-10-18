@@ -3,11 +3,15 @@ module.exports = {
     browser: true,
     commonjs: true,
     shelljs: true,
-    node: true
+    node: true,
+    amd: true
   },
   extends: [
     "eslint:recommended"
   ],
+  globals: {
+    YT: true
+  },
   plugins: [
     "import"
   ],
