@@ -1,0 +1,56 @@
+:root {
+  --desktop_height: 105px;
+  --desktop_zoomWidth: 50px;
+  --desktop_margin: 20px;
+}
+
+#zoom {
+  position: absolute;
+  right: var(--desktop_margin);
+  bottom: var(--desktop_margin);
+  flex-direction: column;
+  justify-content: space-between;
+  height: var(--desktop_height);
+  width: var(--desktop_zoomWidth);
+  padding: 0px;
+  display: none;
+}
+
+#zoom > button {
+  width: 50px;
+  height: 49px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid rgba(153, 153, 153, 0.33);
+}
+#zoom > #plusIcon {
+  background: url(/img/plus.svg);
+  background-color: #ffffff;
+}
+
+#zoom > #minusIcon {
+  background: url(/img/minus.svg);
+  background-color: #ffffff;
+}
+
+/* desktop */
+@media all {
+  #zoom {
+    display: none;
+  }
+
+  #zoom.show {
+    display: flex;
+  }
+}
+/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+@media (max-width: 400px) {
+  #zoom {
+    display: none;
+  }
+  #zoom.show {
+    display: none;
+  }
+}
