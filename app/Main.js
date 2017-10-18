@@ -70,6 +70,6 @@ limitations under the License.
  * @todo Start to refactor entry point
  * @body Refactor to ES6. Check if `domready` is really needed. Use native?
  */
-import "../style/main.css";
+import "./style/main.css";
 
 console.log("--- working setup");
