@@ -1,6 +1,12 @@
 @import "about.css";
 @import "intro.css";
 
+/**
+ * @todo Look into using TypeStyle instead
+ * @body Want to try out [TypeStyle](https://github.com/typestyle/typestyle). 
+ * This project might be a nice simple code base to do so
+ */
+
 :root {
   --desktop-margin: 20px;
 }
