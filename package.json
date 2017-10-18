@@ -4,6 +4,7 @@
   "description": "Bird Sounds",
   "main": "build/Main.js",
   "scripts": {
+    "eslint": "eslint --ext .js ./ --cache",
     "start": "webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack --color -p --progress"
   },
@@ -23,16 +24,17 @@
   "devDependencies": {
     "autoprefixer-loader": "3.2.0",
     "css-loader": "0.23.1",
-    "jshint-loader": "0.8.3",
-    "jshint": "2.9.4",
+    "eslint": "^4.9.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.7.0",
     "json-loader": "0.5.4",
     "node-sass": "3.13.0",
     "raw-loader": "0.5.1",
     "sass-loader": "3.2.3",
     "style-loader": "0.13.1",
+    "webpack": "1.13.3",
     "webpack-dashboard": "0.0.1",
-    "webpack-dev-server": "1.16.2",
-    "webpack": "1.13.3"
+    "webpack-dev-server": "1.16.2"
   },
   "browser": {
     "fs": false
