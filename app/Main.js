@@ -66,5 +66,6 @@ limitations under the License.
 // 		});
 // 	});
 // });
+import "../style/main.css";
 
 console.log("--- working setup");
