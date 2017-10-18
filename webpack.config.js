@@ -19,66 +19,178 @@ Terminal Commands:
 webpack-dev-server to run on localhost:8080
 webpack -p to compile builds
 */
-var webpack = require('webpack');
+const path = require("path");
+const fs = require("fs-extra");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 
-var PROD = process.env.NODE_ENV === 'production';
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const appBuild = resolveApp("build");
+const appSrc = resolveApp("app");
+const appIndexJs = resolveApp("app/Main.js");
+const appHtml = resolveApp("./index.html");
+const PROD = process.env.NODE_ENV === "production";
 
 module.exports = {
-	context: __dirname,
-	entry: {
-		Main: 'app/Main',
-	},
-	output: {
-		filename: './build/[name].js',
-		chunkFilename: './build/[id].js',
-		sourceMapFilename : '[file].map',
-	},
-	resolve: {
-		root: __dirname,
-		modulesDirectories : [
-			'node_modules',
-			'node_modules/tone/'
-		],
-	},
-	plugins: PROD ? [
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false, // ...but do not show warnings in the console (there is a lot of them)
-			}
-		}),
-	] : [],
-	module: {
-		preLoaders: [
-			{
-				test: /\.js$/,
-				exclude: /node_modules/,
-				loader: 'jshint-loader'
-			}
-		],
-		loaders: [
-			{
-				test: /\.scss$/,
-				exclude: /node_modules/,
-				loader: 'style!css!autoprefixer!sass'
-			},
-			{
-				test: /\.json$/,
-				loader: 'json-loader'
-			},
-			{
-				test: /\.(png|gif)$/,
-				loader: 'url-loader',
-			},
-			{
-				test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-				loader : 'file-loader?name=images/font/[hash].[ext]'
-			}
-		]
-	},
-	node: {
-		fs: 'empty',
-	},
-	target: 'web',
-	watch: !PROD
-
+  entry: {
+    main: appIndexJs
+  },
+  devServer: {
+    hot: !PROD
+  },
+  output: {
+    path: appBuild,
+    filename: !PROD ? "js/[name].js" : "js/[name].[hash:8].js",
+    chunkFilename: !PROD
+      ? "./js/[name].chunk.js"
+      : "./js/[name].[chunkhash:8].chunk.js"
+  },
+  resolve: {
+    modules: ["node_modules", "node_modules/tone/"]
+  },
+  plugins: [
+    new CleanWebpackPlugin([appBuild]),
+    PROD
+      ? new ExtractTextPlugin({
+          filename: "css/[name].[contenthash:8].css",
+          allChunks: true
+        })
+      : () => {},
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: appHtml,
+      minify: PROD
+        ? {
+            removeComments: true,
+            collapseWhitespace: true,
+            removeRedundantAttributes: true,
+            useShortDoctype: true,
+            removeEmptyAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            keepClosingSlash: true,
+            minifyJS: true,
+            minifyCSS: true,
+            minifyURLs: true
+          }
+        : false
+    }),
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    PROD
+      ? new webpack.optimize.UglifyJsPlugin({
+          compress: {
+            warnings: false,
+            // Disabled because of an issue with Uglify breaking seemingly valid code:
+            // https://github.com/facebookincubator/create-react-app/issues/2376
+            // Pending further investigation:
+            // https://github.com/mishoo/UglifyJS2/issues/2011
+            comparisons: false
+          },
+          output: {
+            comments: false,
+            // Turned on because emoji and regex is not minified properly using default
+            // https://github.com/facebookincubator/create-react-app/issues/2488
+            ascii_only: true
+          },
+          sourceMap: false
+        })
+      : () => {}
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        exclude: /node_modules/,
+        loader: "eslint-loader",
+        include: appSrc
+      },
+      {
+        oneOf: [
+          {
+            test: /\.js$/,
+            include: appSrc,
+            loader: "babel-loader",
+            options: !PROD ? { cacheDirectory: true } : {}
+          },
+          {
+            test: /\.css$/,
+            use: !PROD
+              ? [
+                  "style-loader",
+                  {
+                    loader: "css-loader",
+                    options: {
+                      importLoaders: 1
+                    }
+                  },
+                  {
+                    loader: "postcss-loader",
+                    options: {
+                      ident: "postcss"
+                    }
+                  }
+                ]
+              : ExtractTextPlugin.extract(
+                  Object.assign({
+                    fallback: {
+                      loader: "style-loader",
+                      options: {
+                        hmr: false
+                      }
+                    },
+                    use: [
+                      {
+                        loader: "css-loader",
+                        options: {
+                          importLoaders: 1,
+                          minimize: true,
+                          sourceMap: false
+                        }
+                      },
+                      {
+                        loader: "postcss-loader",
+                        options: {
+                          ident: "postcss"
+                        }
+                      }
+                    ]
+                  })
+                )
+          },
+          {
+            test: /\.(png|gif)$/,
+            loader: "url-loader"
+          },
+          {
+            test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+            loader: "file-loader",
+            options: {
+              name: "images/font/[hash].[ext]"
+            }
+          },
+          {
+            exclude: [/\.js$/, /\.html$/, /\.json$/],
+            loader: "file-loader"
+          }
+        ]
+      }
+    ]
+  },
+  node: {
+    dgram: "empty",
+    fs: "empty",
+    net: "empty",
+    tls: "empty",
+    child_process: "empty"
+  },
+  performance: {
+    hints: false
+  },
+  bail: PROD,
+  cache: !PROD,
+  devtool: !PROD ? "cheap-module-eval-source-map" : false
 };

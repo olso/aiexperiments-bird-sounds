@@ -14,55 +14,57 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-require("style/main.scss");
+// require("style/main.scss");
 
-var Config = require("./core/Config");
+// var Config = require("./core/Config");
 
-require(["domready"], function(domReady){
+// require(["domready"], function(domReady){
 
-	domReady(function(){
+// 	domReady(function(){
 
-		document.onselectstart = function () { return false; };
+// 		document.onselectstart = function () { return false; };
 
-		require(["./Birds"], function(Birds){
+// 		require(["./Birds"], function(Birds){
 
-			var onBadges = function (event) {
-				event.stopPropagation();
-				event.preventDefault();
-			};
+// 			var onBadges = function (event) {
+// 				event.stopPropagation();
+// 				event.preventDefault();
+// 			};
 
-			var onAbout = function(event){
-				event.preventDefault();
-				event.stopPropagation();
-			};
+// 			var onAbout = function(event){
+// 				event.preventDefault();
+// 				event.stopPropagation();
+// 			};
 
-			var onStart = function(event){
-				birds.beginExperience();
-				badges.removeEventListener("click", onBadges,false);
-				startButton.removeEventListener('click', onStart, false);
-				aboutButton.removeEventListener('click', onAbout, false);
-				event.preventDefault();
-				event.stopPropagation();
-			};
+// 			var onStart = function(event){
+// 				birds.beginExperience();
+// 				badges.removeEventListener("click", onBadges,false);
+// 				startButton.removeEventListener('click', onStart, false);
+// 				aboutButton.removeEventListener('click', onAbout, false);
+// 				event.preventDefault();
+// 				event.stopPropagation();
+// 			};
 
-			var birds = new Birds();
-			var aboutButton = document.getElementById("aboutLink");
-			var startButton = document.getElementById("startLink");
-			var badges = document.getElementById("badges");
-			var cover = document.getElementById("cover");
+// 			var birds = new Birds();
+// 			var aboutButton = document.getElementById("aboutLink");
+// 			var startButton = document.getElementById("startLink");
+// 			var badges = document.getElementById("badges");
+// 			var cover = document.getElementById("cover");
 
-			birds.addEventListener("GRID_LOADED",function(){
-				if(Config.isSplashDisabled){
-					birds.beginExperience();
-				} else {
-					badges.addEventListener("click", onBadges,false);
-					startButton.addEventListener('click', onStart, false);
-					aboutButton.addEventListener('click', onAbout, false);
-				}
-			});
+// 			birds.addEventListener("GRID_LOADED",function(){
+// 				if(Config.isSplashDisabled){
+// 					birds.beginExperience();
+// 				} else {
+// 					badges.addEventListener("click", onBadges,false);
+// 					startButton.addEventListener('click', onStart, false);
+// 					aboutButton.addEventListener('click', onAbout, false);
+// 				}
+// 			});
 
-			birds.init();
-			cover.classList.add("show");
-		});
-	});
-});
+// 			birds.init();
+// 			cover.classList.add("show");
+// 		});
+// 	});
+// });
+
+console.log("--- working setup");
