@@ -14,108 +14,90 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var TWEEN = require("tween.js");
+import TWEEN from "tween.js";
+import PIXI from "pixi.js";
+import Config from "../core/Config";
 
-var BoilerPlate = require("../BoilerPlate");
-var Data = require("../core/Data");
-var Config = require("../core/Config");
+class Dragger {
+  size = Config.draggerSize;
+  constructor() {
+    this.container = new PIXI.Container();
+    this.container.interactive = true;
+    this.container.buttonMode = true;
+    this.container.defaultCursor = "pointer";
 
-var Dragger = module.exports = function() {
+    const texture = PIXI.Texture.fromImage(
+      Config.birdFFTSpriteSheet,
+      false,
+      PIXI.SCALE_MODES.NEAREST
+    );
+    this.sprite = new PIXI.Sprite(texture);
+    this.sprite.scale.x = this.size / 32.0;
+    this.sprite.scale.y = this.size / 32.0;
+    this.container.addChild(this.sprite);
 
-	var scope = this;
-	BoilerPlate.call(this);
-	this.name = "Dragger";
-	this.container = null;
-	this.x = -1;
-	this.y = -1;
-	this.size = Config.draggerSize;
+    const myMask = new PIXI.Graphics();
+    myMask.beginFill();
+    myMask.drawRect(-this.size * 0.5, -this.size * 0.5, this.size, this.size);
+    myMask.endFill();
+    this.container.addChild(myMask);
 
-	this.init = function() {
-		scope.container = new PIXI.Container();
+    this.sprite.mask = myMask;
 
-		scope.container.interactive = true;
-		scope.container.buttonMode = true;
-		scope.container.defaultCursor = "pointer";
+    const square = new PIXI.Graphics();
+    square.beginFill(Config.colorHighlight, 0.0);
+    square.lineStyle(2, Config.colorHighlight);
+    square.drawRect(-this.size * 0.5, -this.size * 0.5, this.size, this.size);
+    square.endFill();
+    this.container.addChild(square);
 
-		var texture = PIXI.Texture.fromImage(Config.birdFFTSpriteSheet, false, PIXI.SCALE_MODES.NEAREST);
-		this.sprite = new PIXI.Sprite(texture);
-		this.sprite.scale.x = this.size/32.0;
-		this.sprite.scale.y = this.size/32.0;
-		scope.container.addChild(this.sprite);
+    const field = new PIXI.Graphics();
+    field.beginFill(Config.colorHighlight, 0.125);
+    field.drawRect(-this.size * 0.5, -this.size * 0.5, this.size, this.size);
+    field.endFill();
+    field.blendMode = PIXI.BLEND_MODES.MULTIPLY;
+    square.addChild(field);
 
-		var myMask = new PIXI.Graphics();
-		myMask.beginFill();
-		myMask.drawRect(-this.size*0.5, -this.size*0.5, this.size, this.size);
-		myMask.endFill();
-		scope.container.addChild(myMask);
+    const dot = new PIXI.Graphics();
+    dot.beginFill(0xff00ff, 1.0);
+    dot.drawRect(0, 0, 4, 4);
+    dot.endFill();
 
-		this.sprite.mask = myMask;
+    this.setSprite({ x: 60, y: 57, index: 567 });
 
-		var square = new PIXI.Graphics();
-		square.beginFill(Config.colorHighlight, 0.0);
-		square.lineStyle(2, Config.colorHighlight);
-		square.drawRect(-this.size*0.5, -this.size*0.5, this.size, this.size);
-		square.endFill();
-		scope.container.addChild(square);
+    this.container.x = -200;
+    this.container.y = -200;
+    requestAnimationFrame(this.tweenAnimate);
+  }
 
-		field = new PIXI.Graphics();
-		field.beginFill(Config.colorHighlight, 0.125);
-		field.drawRect(-this.size*0.5, -this.size*0.5, this.size, this.size);
-		field.endFill();
-		field.blendMode = PIXI.BLEND_MODES.MULTIPLY;
-		square.addChild(field);
+  highlight() {
+    const state = { value: 1.25 };
+    new TWEEN.Tween(state)
+      .to({ value: 1 }, 100)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .onUpdate(() => {
+        this.container.scale.x = state.value;
+        this.container.scale.y = state.value;
+      })
+      .start();
+  }
 
-		var dot = new PIXI.Graphics();
-		dot.beginFill(0xFF00FF, 1.0);
-		dot.drawRect(0, 0, 4, 4);
-		dot.endFill();
+  setSprite(obj) {
+    this.sprite.x = -this.size * obj.x - this.size * 0.5;
+    this.sprite.y = -this.size * obj.y - this.size * 0.5;
+  }
 
-		this.setSprite({x: 60, y: 57, index: 567});
+  getContainer() {
+    return this.container;
+  }
+  getPosition() {
+    return this.container;
+  }
 
-		scope.container.x = -200;
-		scope.container.y = -200;
-		requestAnimationFrame(tweenAnimate);
-	};
+  tweenAnimate = time => {
+    requestAnimationFrame(this.tweenAnimate);
+    TWEEN.update(time);
+  };
+}
 
-	this.highlight = function() {
-		var isComplete;
-		var state = { value: 1.25 };
-			tween = new TWEEN.Tween(state)
-				.to({ value: 1 }, 100)
-				.easing(TWEEN.Easing.Quadratic.InOut)
-				.onStart(function(){
-					isComplete = false;
-				})
-				.onUpdate(function() {
-
-					scope.container.scale.x = state.value;
-					scope.container.scale.y = state.value;
-
-				})
-				.onComplete(function(){
-					isComplete = true;
-				})
-				.start();
-	};
-
-	this.setSprite = function(obj) {
-		this.sprite.x = -this.size*(obj.x)-this.size*0.5;
-		this.sprite.y = -this.size*(obj.y)-this.size*0.5;
-	};
-
-	this.getContainer = function() {
-		return scope.container;
-	};
-
-	this.getPosition = function() {
-		return scope.container;
-	};
-
-	function tweenAnimate(time) {
-		requestAnimationFrame(tweenAnimate);
-		TWEEN.update(time);
-	}
-};
-
-Dragger.prototype = new BoilerPlate();
-Dragger.prototype.constructor = Dragger;
+export default Dragger;
