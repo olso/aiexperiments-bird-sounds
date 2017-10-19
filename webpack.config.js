@@ -100,8 +100,8 @@ module.exports = {
           }
         : false
     }),
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
+    !PROD ? new webpack.NamedModulesPlugin() : () => {},
+    !PROD ? new webpack.HotModuleReplacementPlugin() : () => {},
     PROD
       ? new webpack.optimize.UglifyJsPlugin({
           compress: {
