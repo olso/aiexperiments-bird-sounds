@@ -14,161 +14,149 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-require("../../style/loader.scss");
+import birdCoordsRaw from "../data/tsne/grid.30.30.2d.sorted.tsv";
+import filenamesRaw from "../data/names.txt";
+import birdSuggestionsRaw from "../data/autosuggest_bird.txt";
 
-var birdCoords = require("raw!data/tsne/grid.30.30.2d.sorted.tsv");
-var filenames = require("raw!data/names.txt");
-var Config = require("./Config.js");
-var birdSuggestions = require("raw!data/autosuggest_bird.txt");
+import Config from "./Config";
 
-(function(){
+const birdCoords = (() => {
+  const data = birdCoordsRaw.split("\n");
+  for (let i = 0; i < data.length; i += 1) {
+    const row = data[i].split("\t");
+    data[i] = [parseFloat(row[0]), parseFloat(row[1]), parseFloat(row[2])];
+  }
+  return data;
+})();
 
-	var i,j;
-	//setup the bird coords
-	birdCoords = birdCoords.split("\n");
-	for (i = 0; i < birdCoords.length; i++){
-		var row = birdCoords[i].split("\t");
-		birdCoords[i] = [
-			parseFloat(row[0]), 
-			parseFloat(row[1]), 
-			parseFloat(row[2])
-			]; 
-	}
+const filenames = (() => {
+  const data = filenamesRaw.split("\n");
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = data[i].toUpperCase();
+  }
+  return data;
+})();
 
-	filenames = filenames.split("\n");
-	for (i = 0; i < filenames.length; i++){
-		filenames[i] = filenames[i].toUpperCase();
-	}
+const birdSuggestions = (() => birdSuggestionsRaw.split("\n"))();
 
-	birdSuggestions = birdSuggestions.split("\n");
-}());
+class Data {
+  // constructor() {}
+  videoId = "31PWjb7Do1s";
+  totalPoints = birdCoords.length;
+  filterStates = null;
+  filteredList = [];
 
-var Data = module.exports = {
-	videoId: '31PWjb7Do1s',
-	totalPoints: birdCoords.length,
-	filterStates:null,
-	filteredList: [],
-	getBird: function(index){
-		return {
-				x: birdCoords[index][0],
-				y: birdCoords[index][1],
-				index: birdCoords[index][2]
-			};
-	},
-	getBirdIndex: function(index) {
-		return birdCoords[index][2];
-	},
-	getBirdX: function(index) {
-		return birdCoords[index][0];
-	},
-	getBirdY: function(index) {
-		return birdCoords[index][1];
-	},
+  static getBird(index) {
+    return {
+      x: birdCoords[index][0],
+      y: birdCoords[index][1],
+      index: birdCoords[index][2]
+    };
+  }
 
-	getTotalPoints: function(){
-		return this.totalPoints;
-	},
+  static getBirdIndex(index) {
+    return birdCoords[index][2];
+  }
 
-	randomizeFilterStates: function () {
-		var i,j,k;
-		var total = Data.getTotalPoints();
-		var randomState;
+  static getBirdX(index) {
+    return birdCoords[index][0];
+  }
 
-		for(i=0;i<total; i++){
-			randomState = (((Math.random()*4)|0) === 0) ? Config.filterVisible:Config.filterHidden;
-			Data.setFilterState(i,randomState);
-		}
-	},
+  static getBirdY(index) {
+    return birdCoords[index][1];
+  }
 
-	createFilterStates: function (state) {
-		var i,j,k;
-		var total = Data.getTotalPoints();
-		state = state || Config.filterVisible;
-		Data.filterStates = [];
-		for(i=0;i<total; i++){
-			Data.setFilterState(i,state);
-		}
-	},
+  static getTotalPoints() {
+    return this.totalPoints;
+  }
 
-	setFilterState: function (index, state) {
-		Data.filterStates[index] = state;
-	},
+  static randomizeFilterStates() {
+    const total = Data.getTotalPoints();
+    let randomState;
 
-	resetFilterStates: function () {
-		var i,j,k;
-		var total = Data.getTotalPoints();
+    for (let i = 0; i < total; i += 1) {
+      randomState =
+        (Math.random() * 4 || 0) === 0
+          ? Config.filterVisible
+          : Config.filterHidden;
+      Data.setFilterState(i, randomState);
+    }
+  }
 
-		for(i=0;i<total; i++){
-			Data.setFilterState(i,Config.filterVisible);
-		}
-	},
+  static createFilterStates(state = Config.filterVisible) {
+    Data.filterStates = [];
+    for (let i = 0; i < Data.getTotalPoints(); i += 1) {
+      Data.setFilterState(i, state);
+    }
+  }
 
-	filter: function(value){
-		var i,j,k;
-		var tag, tags;
-		var total = Data.getTotalPoints();
-		var totalTags;
-		var term = value.toUpperCase();
+  static setFilterState(index, state) {
+    Data.filterStates[index] = state;
+  }
 
-		// single word
-		if(term.split(" ").length===1) {
-			var name;
-			var separators = [' ', '-', '\\\(', '\\\)'].join('|');
-			for (i = 0; i < filenames.length; i++){
-				this.filterStates[i] = Config.filterHidden;
-				if(	~filenames[i].indexOf(term) ){
-					name = filenames[i].split(new RegExp(separators, 'g'));
-					for(j=(name.length-1); j>=0; --j) {
-						if(name[j].indexOf(term)===0) {
-							this.filterStates[i] = Config.filterVisible;
-							break;
-						}
-					}
+  static resetFilterStates() {
+    for (let i = 0; i < Data.getTotalPoints(); i += 1) {
+      Data.setFilterState(i, Config.filterVisible);
+    }
+  }
 
-				}
-			}
+  filter(value) {
+    const term = value.toUpperCase();
 
-		// multi word
-		} else {
-			for (i = 0; i < filenames.length; i++){
-				this.filterStates[i] = Config.filterHidden;
-				if(	~filenames[i].indexOf(term) ){
-					this.filterStates[i] = Config.filterVisible;
-				}
-			}
+    /* single word */
+    if (term.split(" ").length === 1) {
+      let name;
+      const separators = [" ", "-", "\\(", "\\)"].join("|");
+      for (let i = 0; i < filenames.length; i += 1) {
+        this.filterStates[i] = Config.filterHidden;
+        if (!filenames[i].indexOf(term)) {
+          name = filenames[i].split(new RegExp(separators, "g"));
+          for (let j = name.length - 1; j >= 0; j -= 1) {
+            if (name[j].indexOf(term) === 0) {
+              this.filterStates[i] = Config.filterVisible;
+              break;
+            }
+          }
+        }
+      }
 
-		}
+      /* multi word */
+    } else {
+      for (let i = 0; i < filenames.length; i += 1) {
+        this.filterStates[i] = Config.filterHidden;
+        if (!filenames[i].indexOf(term)) {
+          this.filterStates[i] = Config.filterVisible;
+        }
+      }
+    }
+  }
 
-	},
+  static getSuggestions(value) {
+    let suggestions;
+    if (!value) {
+      suggestions = Config.emptySuggestions;
+      return suggestions;
+    }
 
-	getSuggestions: function(value){
-		var suggestions;
-		if (!value) {
-			suggestions = Config.emptySuggestions;
-			return suggestions;
-		}
-		var i,j,k;
-		var tag, tags;
-		var total = birdSuggestions.length;
-		var term = value.toUpperCase();
-		var name;
-		suggestions = [];
+    const term = value.toUpperCase();
+    let name;
+    suggestions = [];
 
-		var separators = [' ', '-', '\\\(', '\\\)'].join('|');
+    const separators = [" ", "-", "\\(", "\\)"].join("|");
 
-		// inline search
-		for (i = 0; i < birdSuggestions.length; i++){
+    // inline search
+    for (let i = 0; i < birdSuggestions.length; i += 1) {
+      name = birdSuggestions[i].split(new RegExp(separators, "g"));
+      for (let j = name.length - 1; j >= 0; j -= 1) {
+        if (name[j].indexOf(term) === 0) {
+          suggestions.push(birdSuggestions[i]);
+          break;
+        }
+      }
+    }
 
-			name = birdSuggestions[i].split(new RegExp(separators, 'g'));
-			for(j=(name.length-1); j>=0; --j) {
-				if(name[j].indexOf(term)===0) {
-					suggestions.push(birdSuggestions[i]);
-					break;
-				}
-			}
-		}
+    return suggestions;
+  }
+}
 
-		return suggestions;
-	},
-
-};
+export default Data;
