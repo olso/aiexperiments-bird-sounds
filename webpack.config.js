@@ -168,6 +168,10 @@ module.exports = {
             loader: "url-loader"
           },
           {
+            test: /\.(txt|tsv)$/,
+            use: "raw-loader"
+          },
+          {
             exclude: [/\.js$/, /\.html$/, /\.json$/],
             loader: "file-loader"
           }
