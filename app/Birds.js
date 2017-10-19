@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var BoilerPlate = require("./BoilerPlate");
+/* var BoilerPlate = require("./BoilerPlate");
 var Data = require("./core/Data");
 var Grid = require("./grid/Grid");
 var Loader = require("./core/Loader");
@@ -358,4 +358,49 @@ var Birds = module.exports = function() {
 };
 
 Birds.prototype = new BoilerPlate();
-Birds.prototype.constructor = Birds;
+Birds.prototype.constructor = Birds; */
+
+import Config from "./core/Config";
+import Grid from "./grid/Grid-New";
+
+class Birds {
+  //   grid
+  //   loader
+  //   sound
+  //   label
+
+  constructor() {
+    console.log("BIRDS - cons");
+    Birds.webglSupportCheck();
+    console.log("Config --- birds ", Config.isStatsEnabled);
+
+    this.grid = new Grid();
+  }
+
+  static webglSupportCheck() {
+    const canvas = document.createElement("canvas");
+    const noGL = document.getElementById("noGL");
+    const gl =
+      canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    if (gl && gl instanceof WebGLRenderingContext) {
+      noGL.remove();
+    } else {
+      noGL.classList.add("show");
+    }
+  }
+
+  static getParameterByName(name, url = window.location.href) {
+    const nameR = name.replace(/[[\]]/g, "\\$&");
+    const regex = new RegExp(`[?&]${nameR}(=([^&#]*)|&|#|$)`);
+    const results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return "";
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  static createUIButtons() {
+    console.log("createuibuttons");
+  }
+}
+
+export default Birds;

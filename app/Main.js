@@ -71,5 +71,13 @@ limitations under the License.
  * @body Refactor to ES6. Check if `domready` is really needed. Use native?
  */
 import "./style/main.css";
+import Config from "./core/Config";
+import Birds from "./Birds";
 
-console.log("--- working setup");
+document.addEventListener("DOMContentLoaded", () => {
+  //   console.log("DOMContentLoaded");
+  Config.isStatsEnabled = "bob";
+  console.log("config", Config.isStatsEnabled);
+  const birds = new Birds();
+  console.log("bird ", birds);
+});
