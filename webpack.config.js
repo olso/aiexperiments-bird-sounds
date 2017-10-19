@@ -25,13 +25,15 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const appBuild = resolveApp("build");
+const appPublic = resolveApp("public");
 const appSrc = resolveApp("app");
 const appIndexJs = resolveApp("app/Main.js");
-const appHtml = resolveApp("./index.html");
+const appHtml = resolveApp("public/index.html");
 const PROD = process.env.NODE_ENV === "production";
 
 module.exports = {
@@ -39,14 +41,22 @@ module.exports = {
     main: appIndexJs
   },
   devServer: {
-    hot: !PROD
+    compress: true,
+    clientLogLevel: "none",
+    contentBase: appPublic,
+    watchContentBase: true,
+    hot: true,
+    watchOptions: {
+      ignored: /node_modules/
+    }
   },
+
   output: {
     path: appBuild,
-    filename: !PROD ? "js/[name].js" : "js/[name].[hash:8].js",
+    filename: !PROD ? "static/js/[name].js" : "static/js/[name].[hash:8].js",
     chunkFilename: !PROD
-      ? "./js/[name].chunk.js"
-      : "./js/[name].[chunkhash:8].chunk.js"
+      ? "static/js/[name].chunk.js"
+      : "static/js/[name].[chunkhash:8].chunk.js"
   },
   resolve: {
     modules: ["node_modules", "node_modules/tone/"]
@@ -54,8 +64,21 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin([appBuild]),
     PROD
+      ? new CopyWebpackPlugin(
+          [
+            {
+              from: appPublic,
+              to: appBuild
+            }
+          ],
+          {
+            ignore: ["index.html"]
+          }
+        )
+      : () => {},
+    PROD
       ? new ExtractTextPlugin({
-          filename: "css/[name].[contenthash:8].css",
+          filename: "static/css/[name].[contenthash:8].css",
           allChunks: true
         })
       : () => {},
@@ -164,13 +187,6 @@ module.exports = {
           {
             test: /\.(png|gif)$/,
             loader: "url-loader"
-          },
-          {
-            test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-            loader: "file-loader",
-            options: {
-              name: "images/font/[hash].[ext]"
-            }
           },
           {
             exclude: [/\.js$/, /\.html$/, /\.json$/],
