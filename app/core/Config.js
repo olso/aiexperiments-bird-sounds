@@ -15,47 +15,46 @@ limitations under the License.
 */
 
 module.exports = {
-	isStatsEnabled: false,
-	isDebugEnabled: false,
-	isAudioDisabled: false,
-	isMobileEnabled: false,
-	isResizeDisabled: false,
-	isSplashDisabled: false,
+  isStatsEnabled: false,
+  isDebugEnabled: false,
+  isAudioDisabled: false,
+  isMobileEnabled: false,
+  isResizeDisabled: false,
+  isSplashDisabled: false,
 
-	spriteSheetRows : 28,
-	spriteSheetColumns : 25,
-	spriteSheetSize : 100,
-	gridTotalX: 120,
-	gridTotalY: 119,
-	gridUnit: 32,
-	filterHidden:1,
-	filterVisible:2,
-	colorLight:0xf2efea,
-	colorDark:0xe6e3df,
-	colorDarker:0xd9d6d2,
-	colorHighlight:0x18BABA,
-	trailsTotal:6,
-	draggerSize:32*2,//48;
-	audioChunks : 20, // the number of files the audio is split into
-	emptySuggestions:[
-		"DUCK",
-		"SPARROW",
-		"HUMMINGBIRD",
-		"GOLDFINCH",
-		"OWL",
-		"WREN",
-		"HAWK",
-		"WARBLER",
-		"PHOEBE",
-		"WAXWING",
-		"GNATCATCHER",
-		"GULL"
-	],
-	birdFFTSpriteSheet: "./img/spritesheet_new.png",
-	domain: "./", 
-	paths: {
-		tsne: "meta/",
-		audio: "audio/"
-	}
-
+  spriteSheetRows: 28,
+  spriteSheetColumns: 25,
+  spriteSheetSize: 100,
+  gridTotalX: 120,
+  gridTotalY: 119,
+  gridUnit: 32,
+  filterHidden: 1,
+  filterVisible: 2,
+  colorLight: 0xf2efea,
+  colorDark: 0xe6e3df,
+  colorDarker: 0xd9d6d2,
+  colorHighlight: 0x18baba,
+  trailsTotal: 6,
+  draggerSize: 32 * 2, // 48;
+  audioChunks: 20, // the number of files the audio is split into
+  emptySuggestions: [
+    "DUCK",
+    "SPARROW",
+    "HUMMINGBIRD",
+    "GOLDFINCH",
+    "OWL",
+    "WREN",
+    "HAWK",
+    "WARBLER",
+    "PHOEBE",
+    "WAXWING",
+    "GNATCATCHER",
+    "GULL"
+  ],
+  birdFFTSpriteSheet: "./static/img/spritesheet_new.png",
+  domain: "./",
+  paths: {
+    tsne: "meta/",
+    audio: "audio/"
+  }
 };
