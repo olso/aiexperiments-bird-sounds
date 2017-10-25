@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+var YTPlayer = require("yt-player");
 var BoilerPlate = require("./BoilerPlate");
 var Data = require("./core/Data");
 var Grid = require("./grid/Grid");
@@ -216,7 +217,7 @@ var Birds = module.exports = function() {
 				ytPlayer.pauseVideo();
 			},false);
 		};
-		ytPlayer = new YT.Player('drumsVideo', {
+		ytPlayer = new YTPlayer('.drumsVideo', {
 			width:'100%',
 			height:'100%',
 			videoId: Data.videoId,  // youtube video id
